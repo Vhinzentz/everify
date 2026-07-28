@@ -179,7 +179,6 @@
         cancelButtonColor: '#d33',
         confirmButtonText: 'Accept & Continue',
         cancelButtonText: 'Cancel'
-        
         }).then((result) => {
             if (result.isConfirmed) {
                  Swal.fire({
@@ -190,45 +189,14 @@
                         Swal.showLoading();
                     }
                 });
-
-                
-
-
-                 $.ajax({
-                    url: 'list.json',
-                    
-                    type: 'GET', 
+                $.ajax({
+                    url: 'https://sosia.pnp-csg.org/everify/search',
+                    data: formData,
+                    type: 'POST', 
                     dataType: 'json',
-
-                    
-                          
-
                     success: function(data){
                         Swal.close();
-
-                        
-                          let inputLesp;
-                            inputLesp = document.getElementById("lesp_number").value;
-                           
-
-                          let inputBd;
-                            inputBd = document.getElementById("birthdate").value;
-
-                          let passWord;
-                            passWord = (inputLesp) +" "+ (inputBd);
-                          
-                           
-                          let filteredLesp;                   
-                            filteredLesp = data.find(x => x.lesp_number === passWord);
-
-                         
-                          data = filteredLesp
-                          console.log(filteredLesp)
-                       
-                  
-                  
-
-                        if(data){
+                        if(data.alerttype=='success'){
                             Swal.fire({
                                 icon: 'success',
                                 title: 'License is Valid',
@@ -237,9 +205,17 @@
 
                             });
 
-                       
+                        }else if(data.alerttype=='warning'){
+                            Swal.fire({
+                                icon: 'warning',
+                                title: '<span style="color:red">License Expired!</span>',
+                                html: 'Name: <b>'+data.fullname+'</b><br/>' +
+                                      'License Type: <b>'+data.licenseType+'</b><br/>' +
+                                      'Date Expiry: <span style="color:red"><b>'+data.ExpiryDate+'</b></span>',
+                                showConfirmButton: true
+                            });
 
-                        }else if(!data){
+                        }else if(data.alerttype=='error'){
                             Swal.fire({
                                 icon: 'error',
                                 title: 'No record found!',
